@@ -12,7 +12,7 @@ fn main() {
     // 1. Initialize monitoring with your unique API key
     let _monitor = Monitor::init("coerror-user-45-ajd3j5mnkja9fcc6162");
     
-    println!("🚀 Service starting...");
+    println!("Service starting...");
 
     // 2. Your application logic runs as normal
     let handler = thread::spawn(|| {
