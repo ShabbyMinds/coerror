@@ -131,6 +131,15 @@ function WorldMapBase({
                                     repeatCount="indefinite"
                                 />
                             </circle>
+                            {dot.start.label && (
+                                <text
+                                    x={projectPoint(dot.start.lat, dot.start.lng).x + 10}
+                                    y={projectPoint(dot.start.lat, dot.start.lng).y + 4}
+                                    className="text-[10px] font-medium fill-neutral-800 font-mono pointer-events-none select-none"
+                                >
+                                    {dot.start.label}
+                                </text>
+                            )}
                         </g>
                         <g key={`end-${i}`}>
                             <circle
@@ -163,11 +172,20 @@ function WorldMapBase({
                                     repeatCount="indefinite"
                                 />
                             </circle>
+                            {dot.end.label && (
+                                <text
+                                    x={projectPoint(dot.end.lat, dot.end.lng).x + 10}
+                                    y={projectPoint(dot.end.lat, dot.end.lng).y + 4}
+                                    className="text-[10px] font-medium fill-neutral-800 font-mono pointer-events-none select-none"
+                                >
+                                    {dot.end.label}
+                                </text>
+                            )}
                         </g>
                     </g>
                 ))}
             </svg>
-        </div>
+        </div >
     );
 }
 

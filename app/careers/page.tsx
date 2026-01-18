@@ -127,10 +127,9 @@ ${formData.name}`
         <main className="min-h-screen bg-white relative">
             {/* Back Button */}
             <div className="absolute top-6 left-6 z-50">
-                <Link href="/">
-                    <Button variant="ghost" size="sm" className="gap-2 hover:bg-gray-100 text-neutral-600">
-                        <ArrowLeft className="w-4 h-4" /> Back to Home
-                    </Button>
+                <Link href="/" className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/50 backdrop-blur-sm border border-gray-200 text-sm font-medium text-gray-600 hover:bg-black hover:text-white hover:border-black transition-all group">
+                    <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                    Back to Home
                 </Link>
             </div>
 

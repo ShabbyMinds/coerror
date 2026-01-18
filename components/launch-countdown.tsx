@@ -42,7 +42,7 @@ export function LaunchCountdown() {
                     <span className="text-xs text-gray-400 mt-2">MINUTES</span>
                 </div>
                 <div className="flex flex-col">
-                    <span className="text-4xl md:text-6xl font-bold text-orange-600">{String(timeLeft.seconds).padStart(2, '0')}</span>
+                    <span className="text-4xl md:text-6xl font-bold text-gray-500">{String(timeLeft.seconds).padStart(2, '0')}</span>
                     <span className="text-xs text-gray-400 mt-2">SECONDS</span>
                 </div>
             </div>
