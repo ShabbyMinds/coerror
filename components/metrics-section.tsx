@@ -1,3 +1,5 @@
+import CodeBlockDemoSecond from "@/components/code-block-demo-2"
+
 export function MetricsSection() {
   const metrics = [
     {
@@ -25,6 +27,12 @@ export function MetricsSection() {
   return (
     <section className="relative py-20 px-4 bg-white">
       <div className="max-w-6xl mx-auto space-y-12">
+
+        {/* Code Block Demo - Inserted before header */}
+        <div className="pb-12">
+          <CodeBlockDemoSecond />
+        </div>
+
         <div className="space-y-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-balance text-background">Measure Action, Not Just Uptime.</h2>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto text-balance">

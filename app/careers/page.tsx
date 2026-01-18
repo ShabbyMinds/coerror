@@ -7,9 +7,10 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { ArrowRight, Mail } from "lucide-react"
+import { ArrowRight, Mail, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 export default function CareersPage() {
     const jobs = [
@@ -77,7 +78,8 @@ export default function CareersPage() {
     const [formData, setFormData] = useState({
         name: "",
         college: "",
-        experience: ""
+        experience: "",
+        internRole: "Fullstack" // Default for interns
     })
 
     const handleApplyClick = (roleTitle: string) => {
@@ -88,27 +90,50 @@ export default function CareersPage() {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
 
-        // Construct mailto link
-        // Subject: Application for [Role] - [Name]
-        // Body: Pre-filled details
-        const subject = encodeURIComponent(`Application for ${selectedRole} - ${formData.name}`)
-        const body = encodeURIComponent(
-            `Name: ${formData.name}
-College/Company: ${formData.college}
-Experience: ${formData.experience}
+        // Formal Email Generation
+        const isIntern = selectedRole.toLowerCase().includes("intern")
+        const subject = `Application for ${selectedRole} - ${formData.name}`
 
-[Please attach your resume and add any other details here]
-`)
+        let emailBody = `Dear Hiring Team,
+
+I am writing to express my interest in the ${selectedRole} position at Coerror.
+
+Name: ${formData.name}
+Current Role/Education: ${formData.college}
+Experience: ${formData.experience}
+`
+        if (isIntern) {
+            emailBody += `Interested Track: ${formData.internRole}\n`
+        }
+
+        emailBody += `
+I have attached my resume for your review. I look forward to the possibility of discussing how my skills align with your needs.
+
+Sincerely,
+${formData.name}`
+
+        // Encode for mailto
+        const encodedSubject = encodeURIComponent(subject)
+        const encodedBody = encodeURIComponent(emailBody)
 
         // Open default mail client
-        window.location.href = `mailto:career@coerror.com?subject=${subject}&body=${body}`
+        window.location.href = `mailto:career@coerror.com?subject=${encodedSubject}&body=${encodedBody}`
 
         // Close modal optionally
         setOpen(false)
     }
 
     return (
-        <main className="min-h-screen bg-white">
+        <main className="min-h-screen bg-white relative">
+            {/* Back Button */}
+            <div className="absolute top-6 left-6 z-50">
+                <Link href="/">
+                    <Button variant="ghost" size="sm" className="gap-2 hover:bg-gray-100 text-neutral-600">
+                        <ArrowLeft className="w-4 h-4" /> Back to Home
+                    </Button>
+                </Link>
+            </div>
+
             {/* Hero Section */}
             <section className="pt-32 pb-20 px-4 border-b border-gray-100">
                 <div className="max-w-4xl mx-auto text-center space-y-6">
@@ -169,7 +194,6 @@ Experience: ${formData.experience}
                                             </div>
 
                                             <div className="pt-6 border-t border-gray-100 flex flex-col sm:flex-row gap-4 items-center justify-end">
-
                                                 <Button
                                                     size="lg"
                                                     className="rounded-full bg-black hover:bg-neutral-800 text-white px-8"
@@ -213,7 +237,7 @@ Experience: ${formData.experience}
                 <DialogContent
                     className="sm:max-w-[425px] text-black"
                     style={{
-                        background: 'rgba(255, 255, 255, 0.2)',
+                        background: 'rgba(255, 255, 255, 0.7)', // Less transparent as requested
                         backdropFilter: 'blur(10px)',
                         WebkitBackdropFilter: 'blur(10px)',
                         borderRadius: '16px',
@@ -261,6 +285,27 @@ Experience: ${formData.experience}
                                 className="bg-white/50 border-black/10 focus:border-black/30 placeholder:text-black/40 text-black"
                             />
                         </div>
+
+                        {/* Dropdown for Intern Role */}
+                        {selectedRole.toLowerCase().includes("intern") && (
+                            <div className="grid gap-2">
+                                <Label htmlFor="internRole" className="text-black">Internship Track</Label>
+                                <Select
+                                    value={formData.internRole}
+                                    onValueChange={(value) => setFormData({ ...formData, internRole: value })}
+                                >
+                                    <SelectTrigger className="w-full bg-white/60 border-black/20 text-black h-10 rounded-lg">
+                                        <SelectValue placeholder="Select a track" />
+                                    </SelectTrigger>
+                                    <SelectContent className="bg-white border text-black">
+                                        <SelectItem value="Fullstack">Fullstack Developer</SelectItem>
+                                        <SelectItem value="Backend">Backend Developer</SelectItem>
+                                        <SelectItem value="React Dev">React Developer</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        )}
+
                         <DialogFooter>
                             <Button type="submit" className="w-full bg-black text-white hover:bg-neutral-800">
                                 Open Email Client
