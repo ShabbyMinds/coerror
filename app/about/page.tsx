@@ -117,7 +117,7 @@ export default function AboutPage() {
                     <div className="p-8 rounded-2xl bg-black border border-gray-800 max-w-2xl mx-auto text-sm leading-relaxed shadow-xl">
                         <span className="font-bold text-white block mb-3 tracking-wide uppercase text-xs">Important Disclaimer</span>
                         <p className="text-gray-300">
-                            <span className="text-white font-medium border-b border-gray-600 pb-0.5">Don't follow any social media posing as us.</span> We are not yet available and launched.
+                            <span className="text-white font-medium border-b border-gray-600 pb-0.5">Don't follow any social media posing as us.</span> We are not yet available on any social media platform or launched.
                         </p>
                     </div>
                 </div>
