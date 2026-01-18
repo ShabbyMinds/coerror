@@ -1,8 +1,8 @@
 "use client"
 
 import { Footer } from "@/components/footer"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import { Badge } from "@/components/ui/badge"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../../components/ui/accordion"
+import { Badge } from "../../components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
@@ -18,7 +18,7 @@ export default function CareersPage() {
             title: "Backend Developer",
             type: "Full-time",
             exp: "0-3 Years", // Explicitly 0-3 years as requested
-            location: "Remote / Hybrid",
+            location: "Onsite",
             description: "We are looking for a backend developer to build scalable observability pipelines. Perfect for those starting their journey or with early experience in high-throughput systems.",
             requirements: [
                 "Strong knowledge of Go or Rust",
@@ -32,7 +32,7 @@ export default function CareersPage() {
             title: "Full Stack Developer",
             type: "Full-time",
             exp: "2+ Years",
-            location: "Remote / Hybrid",
+            location: "Onsite",
             description: "Join us to build the next generation of observability dashboards. You'll work across the stack, from React/Next.js frontends to efficient API layers.",
             requirements: [
                 "Proficiency in React, Next.js, and TypeScript",
@@ -46,7 +46,7 @@ export default function CareersPage() {
             title: "DevOps Engineer",
             type: "Full-time",
             exp: "3+ Years",
-            location: "Remote",
+            location: "Onsite",
             description: "Help us maintain 99.99% uptime. You'll manage our Kubernetes clusters, CI/CD pipelines, and infrastructure as code.",
             requirements: [
                 "Strong experience with Kubernetes and Docker",
@@ -57,15 +57,15 @@ export default function CareersPage() {
         },
         {
             id: "internships",
-            title: "Engineering Internships",
+            title: "SDE Intern (Fullstack & Backend)",
             type: "Internship",
-            exp: "Student",
-            location: "Remote",
+            exp: "6 Months",
+            location: "Hybrid / Onsite",
             description: "Hungry to learn? Join our internship program. You'll work on real production code and be mentored by senior engineers.",
             requirements: [
                 "Strong CS fundamentals (Data Structures, Algorithms)",
                 "Passion for building software",
-                "Available for at least 3 months",
+                "Available for 6 months",
                 "Willingness to learn new technologies fast",
             ],
         },
@@ -112,7 +112,7 @@ Experience: ${formData.experience}
             {/* Hero Section */}
             <section className="pt-32 pb-20 px-4 border-b border-gray-100">
                 <div className="max-w-4xl mx-auto text-center space-y-6">
-                    <Badge variant="outline" className="rounded-full px-4 py-1 text-sm border-gray-200">
+                    <Badge variant="outline" className="rounded-full px-4 py-1 text-sm border-gray-200 text-black">
                         We are hiring
                     </Badge>
                     <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-neutral-900">
@@ -146,10 +146,12 @@ Experience: ${formData.experience}
                                                     </span>
                                                     <span>•</span>
                                                     <span>{job.exp}</span>
+                                                    <span>•</span>
+                                                    <span>{job.location}</span>
                                                 </div>
                                             </div>
-                                            <Badge variant="secondary" className="w-fit bg-gray-100 text-gray-700 font-medium">
-                                                {job.location}
+                                            <Badge className="w-fit bg-black text-white hover:bg-neutral-800 font-medium px-4 py-1.5 rounded-full">
+                                                Apply
                                             </Badge>
                                         </div>
                                     </AccordionTrigger>
@@ -166,11 +168,8 @@ Experience: ${formData.experience}
                                                 </ul>
                                             </div>
 
-                                            <div className="pt-6 border-t border-gray-100 flex flex-col sm:flex-row gap-4 items-center justify-between">
-                                                <div className="text-sm">
-                                                    <p className="font-medium text-neutral-900">Interested?</p>
-                                                    <p>Send your resume via email.</p>
-                                                </div>
+                                            <div className="pt-6 border-t border-gray-100 flex flex-col sm:flex-row gap-4 items-center justify-end">
+
                                                 <Button
                                                     size="lg"
                                                     className="rounded-full bg-black hover:bg-neutral-800 text-white px-8"
@@ -211,42 +210,55 @@ Experience: ${formData.experience}
 
             {/* Application Dialog */}
             <Dialog open={open} onOpenChange={setOpen}>
-                <DialogContent className="sm:max-w-[425px]">
+                <DialogContent
+                    className="sm:max-w-[425px] text-black"
+                    style={{
+                        background: 'rgba(255, 255, 255, 0.2)',
+                        backdropFilter: 'blur(10px)',
+                        WebkitBackdropFilter: 'blur(10px)',
+                        borderRadius: '16px',
+                        border: '1px solid rgba(255, 255, 255, 0.3)',
+                        boxShadow: '0 0 30px 0px rgba(0, 0, 0, 0.3)',
+                    }}
+                >
                     <DialogHeader>
-                        <DialogTitle>Apply for {selectedRole}</DialogTitle>
-                        <DialogDescription>
+                        <DialogTitle className="text-black">Apply for {selectedRole}</DialogTitle>
+                        <DialogDescription className="text-black/70">
                             Enter these details to pre-fill your email application.
                         </DialogDescription>
                     </DialogHeader>
                     <form onSubmit={handleSubmit} className="grid gap-6 py-4">
                         <div className="grid gap-2">
-                            <Label htmlFor="name">Full Name</Label>
+                            <Label htmlFor="name" className="text-black">Full Name</Label>
                             <Input
                                 id="name"
                                 value={formData.name}
                                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                 placeholder="Your Name"
                                 required
+                                className="bg-white/50 border-black/10 focus:border-black/30 placeholder:text-black/40 text-black"
                             />
                         </div>
                         <div className="grid gap-2">
-                            <Label htmlFor="college">College / Current Company</Label>
+                            <Label htmlFor="college" className="text-black">College / Current Company</Label>
                             <Input
                                 id="college"
                                 value={formData.college}
                                 onChange={(e) => setFormData({ ...formData, college: e.target.value })}
                                 placeholder="College Name / Company Name"
                                 required
+                                className="bg-white/50 border-black/10 focus:border-black/30 placeholder:text-black/40 text-black"
                             />
                         </div>
                         <div className="grid gap-2">
-                            <Label htmlFor="experience">Years of Experience</Label>
+                            <Label htmlFor="experience" className="text-black">Years of Experience</Label>
                             <Input
                                 id="experience"
                                 value={formData.experience}
                                 onChange={(e) => setFormData({ ...formData, experience: e.target.value })}
                                 placeholder="e.g. 2 years, or 'Fresher'"
                                 required
+                                className="bg-white/50 border-black/10 focus:border-black/30 placeholder:text-black/40 text-black"
                             />
                         </div>
                         <DialogFooter>
