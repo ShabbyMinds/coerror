@@ -151,9 +151,9 @@ ${formData.name}`
             </section>
 
             {/* Roles Section */}
-            <section className="py-24 px-4 bg-gray-50/50">
+            <section className="py-24 px-4 bg-gray-50">
                 <div className="max-w-3xl mx-auto">
-                    <h2 className="text-3xl font-bold mb-12 text-neutral-900">Open Positions</h2>
+                    <h2 className="text-3xl font-bold mb-12 text-neutral-900 text-center">Open Positions</h2>
 
                     <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
                         <Accordion type="single" collapsible className="w-full">
