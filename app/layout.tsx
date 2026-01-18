@@ -10,6 +10,9 @@ export const metadata: Metadata = {
   title: "coerror - Pre-emptive Observability Network",
   description: "The world's first pre-emptive observability network. Detect issues before anyone reports them.",
   generator: "v0.app",
+  icons: {
+    icon: "/images/coerror-logo-white-bg.svg",
+  },
 }
 
 export default function RootLayout({
