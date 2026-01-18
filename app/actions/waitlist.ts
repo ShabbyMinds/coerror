@@ -13,7 +13,7 @@ export async function submitWaitlist(email: string) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        access_key: "74565a18-7402-45c3-b75b-2bb7e6d405f4",
+        access_key: "70d7fde7-df84-442b-adf9-5e7653adaa7d",
         subject: "New Waitlist Signup - coerror",
         from_name: "coerror Waitlist",
         to: "shabbyminds@gmail.com",
