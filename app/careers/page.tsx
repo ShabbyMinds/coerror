@@ -79,7 +79,8 @@ export default function CareersPage() {
         name: "",
         college: "",
         experience: "",
-        internRole: "Fullstack" // Default for interns
+        internRole: "Fullstack", // Default for interns
+        targetRole: "" // For general application
     })
 
     const handleApplyClick = (roleTitle: string) => {
@@ -92,16 +93,22 @@ export default function CareersPage() {
 
         // Formal Email Generation
         const isIntern = selectedRole.toLowerCase().includes("intern")
-        const subject = `Application for ${selectedRole} - ${formData.name}`
+        const isGeneral = selectedRole === "General Application"
+
+        const subject = `Application for ${isGeneral && formData.targetRole ? formData.targetRole : selectedRole} - ${formData.name}`
 
         let emailBody = `Dear Hiring Team,
 
-I am writing to express my interest in the ${selectedRole} position at Coerror.
+I am writing to express my interest in the ${isGeneral && formData.targetRole ? formData.targetRole : selectedRole} position at Coerror.
 
 Name: ${formData.name}
 Current Role/Education: ${formData.college}
-Experience: ${formData.experience}
 `
+        // Only show experience if NOT an intern
+        if (!isIntern) {
+            emailBody += `Experience: ${formData.experience}\n`
+        }
+
         if (isIntern) {
             emailBody += `Interested Track: ${formData.internRole}\n`
         }
@@ -273,17 +280,19 @@ ${formData.name}`
                                 className="bg-white/50 border-black/10 focus:border-black/30 placeholder:text-black/40 text-black"
                             />
                         </div>
-                        <div className="grid gap-2">
-                            <Label htmlFor="experience" className="text-black">Years of Experience</Label>
-                            <Input
-                                id="experience"
-                                value={formData.experience}
-                                onChange={(e) => setFormData({ ...formData, experience: e.target.value })}
-                                placeholder="e.g. 2 years, or 'Fresher'"
-                                required
-                                className="bg-white/50 border-black/10 focus:border-black/30 placeholder:text-black/40 text-black"
-                            />
-                        </div>
+                        {!selectedRole.toLowerCase().includes("intern") && (
+                            <div className="grid gap-2">
+                                <Label htmlFor="experience" className="text-black">Years of Experience</Label>
+                                <Input
+                                    id="experience"
+                                    value={formData.experience}
+                                    onChange={(e) => setFormData({ ...formData, experience: e.target.value })}
+                                    placeholder="e.g. 2 years, or 'Fresher'"
+                                    required={!selectedRole.toLowerCase().includes("intern")}
+                                    className="bg-white/50 border-black/10 focus:border-black/30 placeholder:text-black/40 text-black"
+                                />
+                            </div>
+                        )}
 
                         {/* Dropdown for Intern Role */}
                         {selectedRole.toLowerCase().includes("intern") && (
@@ -302,6 +311,21 @@ ${formData.name}`
                                         <SelectItem value="React Dev">React Developer</SelectItem>
                                     </SelectContent>
                                 </Select>
+                            </div>
+                        )}
+
+                        {/* Generic Application Target Role */}
+                        {selectedRole === "General Application" && (
+                            <div className="grid gap-2">
+                                <Label htmlFor="targetRole" className="text-black">Role you are interested in</Label>
+                                <Input
+                                    id="targetRole"
+                                    value={formData.targetRole}
+                                    onChange={(e) => setFormData({ ...formData, targetRole: e.target.value })}
+                                    placeholder="e.g. Product Designer"
+                                    required
+                                    className="bg-white/50 border-black/10 focus:border-black/30 placeholder:text-black/40 text-black"
+                                />
                             </div>
                         )}
 
