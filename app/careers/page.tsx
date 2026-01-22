@@ -11,6 +11,8 @@ import { ArrowRight, Mail, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Checkbox } from "@/components/ui/checkbox"
+import { cn } from "@/lib/utils"
 
 export default function CareersPage() {
     const jobs = [
@@ -19,6 +21,7 @@ export default function CareersPage() {
             title: "Backend Developer",
             type: "Full-time",
             exp: "0-3 Years", // Explicitly 0-3 years as requested
+            minExp: 0,
             location: "Onsite",
             description: "We are looking for a backend developer to build scalable observability pipelines. Perfect for those starting their journey or with early experience in high-throughput systems.",
             requirements: [
@@ -33,6 +36,7 @@ export default function CareersPage() {
             title: "Full Stack Developer",
             type: "Full-time",
             exp: "2+ Years",
+            minExp: 2,
             location: "Onsite",
             description: "Join us to build the next generation of observability dashboards. You'll work across the stack, from React/Next.js frontends to efficient API layers.",
             requirements: [
@@ -47,6 +51,7 @@ export default function CareersPage() {
             title: "DevOps Engineer",
             type: "Full-time",
             exp: "3+ Years",
+            minExp: 3,
             location: "Onsite",
             description: "Help us maintain 99.99% uptime. You'll manage our Kubernetes clusters, CI/CD pipelines, and infrastructure as code.",
             requirements: [
@@ -61,6 +66,7 @@ export default function CareersPage() {
             title: "SDE Intern (Fullstack & Backend)",
             type: "Internship",
             exp: "6 Months",
+            minExp: 0,
             location: "Hybrid / Onsite",
             description: "Hungry to learn? Join our internship program. You'll work on real production code and be mentored by senior engineers.",
             requirements: [
@@ -74,7 +80,10 @@ export default function CareersPage() {
 
     // Application Modal State
     const [selectedRole, setSelectedRole] = useState("")
+    const [selectedJobId, setSelectedJobId] = useState("")
     const [open, setOpen] = useState(false)
+    const [acceptTerms, setAcceptTerms] = useState(false)
+    const [showTermsError, setShowTermsError] = useState(false)
     const [formData, setFormData] = useState({
         name: "",
         college: "",
@@ -83,17 +92,44 @@ export default function CareersPage() {
         targetRole: "" // For general application
     })
 
-    const handleApplyClick = (roleTitle: string) => {
+    const handleApplyClick = (roleTitle: string, jobId: string) => {
         setSelectedRole(roleTitle)
+        setSelectedJobId(jobId)
         setOpen(true)
+        setAcceptTerms(false)
+        setShowTermsError(false)
+    }
+
+    // Helper to get minimum experience for current role
+    const getCurrentJobMinExp = () => {
+        const job = jobs.find(j => j.id === selectedJobId || j.title === selectedRole)
+        return job?.minExp ?? 0
+    }
+
+    const isOptionDisabled = (optionValue: string) => {
+        const minExp = getCurrentJobMinExp()
+        if (minExp === 0) return false // Internship/Fresher roles accept everything
+
+        let value = 0
+        if (optionValue === "Internship" || optionValue === "Fresher") value = 0
+        else if (optionValue.includes("10+")) value = 10
+        else value = parseInt(optionValue)
+
+        return value < minExp
     }
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
 
-        // Formal Email Generation
-        const isIntern = selectedRole.toLowerCase().includes("intern")
+        const isIntern = selectedRole.toLowerCase().includes("intern") || formData.experience === "Internship"
         const isGeneral = selectedRole === "General Application"
+
+        // Validation: Terms for Interns
+        if (isIntern && !acceptTerms) {
+            setShowTermsError(true)
+            return
+        }
+        setShowTermsError(false)
 
         const subject = `Application for ${isGeneral && formData.targetRole ? formData.targetRole : selectedRole} - ${formData.name}`
 
@@ -111,6 +147,8 @@ Current Role/Education: ${formData.college}
 
         if (isIntern) {
             emailBody += `Interested Track: ${formData.internRole}\n`
+            // Add acceptance text to email body
+            emailBody += `\nI acknowledge that I have read the terms and conditions. I understand that this is an unpaid internship position and I agree to these terms.\n`
         }
 
         emailBody += `
@@ -203,7 +241,7 @@ ${formData.name}`
                                                 <Button
                                                     size="lg"
                                                     className="rounded-full bg-black hover:bg-neutral-800 text-white px-8"
-                                                    onClick={() => handleApplyClick(job.title)}
+                                                    onClick={() => handleApplyClick(job.title, job.id)}
                                                 >
                                                     Apply Now <Mail className="ml-2 w-4 h-4" />
                                                 </Button>
@@ -225,7 +263,7 @@ ${formData.name}`
                             <Button
                                 size="lg"
                                 className="rounded-full !bg-white border text-black hover:bg-gray-100 mt-4 custom-email-btn"
-                                onClick={() => handleApplyClick("General Application")}
+                                onClick={() => handleApplyClick("General Application", "general")}
                             >
                                 Email us at career@coerror.com <ArrowRight className="ml-2 w-4 h-4" />
                             </Button>
@@ -280,22 +318,38 @@ ${formData.name}`
                                 className="bg-white/50 border-black/10 focus:border-black/30 placeholder:text-black/40 text-black"
                             />
                         </div>
+
+                        {/* Experience Dropdown */}
                         {!selectedRole.toLowerCase().includes("intern") && (
                             <div className="grid gap-2">
-                                <Label htmlFor="experience" className="text-black">Years of Experience</Label>
-                                <Input
-                                    id="experience"
+                                <Label htmlFor="experience" className="text-black">Experience</Label>
+                                <Select
                                     value={formData.experience}
-                                    onChange={(e) => setFormData({ ...formData, experience: e.target.value })}
-                                    placeholder="e.g. 2 years, or 'Fresher'"
-                                    required={!selectedRole.toLowerCase().includes("intern")}
-                                    className="bg-white/50 border-black/10 focus:border-black/30 placeholder:text-black/40 text-black"
-                                />
+                                    onValueChange={(value) => setFormData({ ...formData, experience: value })}
+                                >
+                                    <SelectTrigger className="w-full bg-white/60 border-black/20 text-black h-10 rounded-lg">
+                                        <SelectValue placeholder="Select Experience" />
+                                    </SelectTrigger>
+                                    <SelectContent className="bg-white border text-black max-h-[200px]">
+                                        <SelectItem value="Internship" disabled={isOptionDisabled("Internship")}>Internship / Fresher</SelectItem>
+                                        <SelectItem value="Fresher" disabled={isOptionDisabled("Fresher")}>0-1 Years</SelectItem>
+                                        <SelectItem value="1 Year" disabled={isOptionDisabled("1 Year")}>1 Year</SelectItem>
+                                        <SelectItem value="2 Years" disabled={isOptionDisabled("2 Years")}>2 Years</SelectItem>
+                                        <SelectItem value="3 Years" disabled={isOptionDisabled("3 Years")}>3 Years</SelectItem>
+                                        <SelectItem value="4 Years" disabled={isOptionDisabled("4 Years")}>4 Years</SelectItem>
+                                        <SelectItem value="5 Years" disabled={isOptionDisabled("5 Years")}>5 Years</SelectItem>
+                                        <SelectItem value="6 Years" disabled={isOptionDisabled("6 Years")}>6 Years</SelectItem>
+                                        <SelectItem value="7 Years" disabled={isOptionDisabled("7 Years")}>7 Years</SelectItem>
+                                        <SelectItem value="8 Years" disabled={isOptionDisabled("8 Years")}>8 Years</SelectItem>
+                                        <SelectItem value="9 Years" disabled={isOptionDisabled("9 Years")}>9 Years</SelectItem>
+                                        <SelectItem value="10+ Years" disabled={isOptionDisabled("10+ Years")}>10+ Years</SelectItem>
+                                    </SelectContent>
+                                </Select>
                             </div>
                         )}
 
                         {/* Dropdown for Intern Role */}
-                        {selectedRole.toLowerCase().includes("intern") && (
+                        {(selectedRole.toLowerCase().includes("intern") || formData.experience === "Internship") && (
                             <div className="grid gap-2">
                                 <Label htmlFor="internRole" className="text-black">Internship Track</Label>
                                 <Select
@@ -311,6 +365,35 @@ ${formData.name}`
                                         <SelectItem value="React Dev">React Developer</SelectItem>
                                     </SelectContent>
                                 </Select>
+                            </div>
+                        )}
+
+                        {/* Terms Checkbox for Interns */}
+                        {(selectedRole.toLowerCase().includes("intern") || formData.experience === "Internship") && (
+                            <div className="flex items-top space-x-2 pt-2">
+                                <Checkbox
+                                    id="terms"
+                                    checked={acceptTerms}
+                                    onCheckedChange={(checked) => {
+                                        setAcceptTerms(checked as boolean)
+                                        if (checked) setShowTermsError(false)
+                                    }}
+                                    className={showTermsError ? "border-red-500 ring-2 ring-red-200" : ""}
+                                />
+                                <div className="grid gap-1.5 leading-none">
+                                    <label
+                                        htmlFor="terms"
+                                        className={cn(
+                                            "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
+                                            showTermsError ? "text-red-500" : "text-black" // Error style for label
+                                        )}
+                                    >
+                                        I have read the <Link href="/careers/terms" target="_blank" className="underline text-blue-600 hover:text-blue-800">term and condition</Link>
+                                    </label>
+                                    <p className={cn("text-xs", showTermsError ? "text-red-400" : "text-black/60")}>
+                                        You agree that this is an unpaid internship.
+                                    </p>
+                                </div>
                             </div>
                         )}
 
@@ -331,7 +414,7 @@ ${formData.name}`
 
                         <DialogFooter>
                             <Button type="submit" className="w-full bg-black text-white hover:bg-neutral-800">
-                                Open Email Client
+                                Apply Now
                             </Button>
                         </DialogFooter>
                     </form>
